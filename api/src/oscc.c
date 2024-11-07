@@ -19,7 +19,7 @@
 #include "internal/oscc.h"
 
 
-int global_oscc_can_socket = UNINITIALIZED_SOCKET;
+static int global_oscc_can_socket = UNINITIALIZED_SOCKET;
 static int global_oscc_can_socket = UNINITIALIZED_SOCKET;
 static int global_vehicle_can_socket = UNINITIALIZED_SOCKET;
 
