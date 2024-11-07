@@ -19,6 +19,7 @@
 #include "internal/oscc.h"
 
 
+int global_oscc_can_socket = UNINITIALIZED_SOCKET;
 static int global_oscc_can_socket = UNINITIALIZED_SOCKET;
 static int global_vehicle_can_socket = UNINITIALIZED_SOCKET;
 
@@ -67,6 +68,11 @@ oscc_result_t oscc_open( unsigned int channel )
     snprintf( can_string_buffer, 16, "can%u", channel );
 
     channel_contents = can_detection( can_string_buffer );
+
+    if (channel_contents.has_vehicle && global_vehicle_can_socket < 0) {
+        printf( "Has vehicle and can socket < 0.\n" );
+    }
+
 
     if( !channel_contents.has_vehicle )
     {
@@ -304,6 +310,7 @@ oscc_result_t oscc_subscribe_to_steering_reports( void (*callback)(oscc_steering
 oscc_result_t oscc_subscribe_to_fault_reports( void (*callback)(oscc_fault_report_s *report))
 {
     oscc_result_t result = OSCC_ERROR;
+    int pointer_as_int = (int)callback;
 
 
     if ( callback != NULL )
@@ -1162,8 +1169,9 @@ oscc_result_t get_wheel_speed_left_front(
 
 
 oscc_result_t get_steering_wheel_angle(
-    struct can_frame const * const frame,
-    double * steering_wheel_angle)
+    struct can_frame const * frame, 
+    double * output
+)
 {
     if((frame == NULL) || (steering_wheel_angle == NULL))
     {
